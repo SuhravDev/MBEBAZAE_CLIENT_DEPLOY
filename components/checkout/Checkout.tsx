@@ -113,11 +113,6 @@ export default function Checkout() {
 
             if (checkoutSession.error) {
                 setError(true);
-                setTimeout(() => {
-                    logeOut();
-                    signOut();
-                    router.replace('/');
-                }, 3000);
             } else {
                 window.location.href = checkoutSession.payment.url;
             }
@@ -198,7 +193,7 @@ export default function Checkout() {
             const res = await addOrder(bookingData)
                 .unwrap()
                 .finally(() => setLoading(false));
-            console.log(res);
+
             if (!res.error) {
                 router.push('/success');
             } else {
