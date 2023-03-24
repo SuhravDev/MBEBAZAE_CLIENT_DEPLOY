@@ -19,13 +19,12 @@ const getOptions = (req: any, res: any) => ({
                         'Content-Type': 'application/json',
                     },
                 });
-                // console.log('COOKIE IS', response.headers.get('set-cookie'));
-                const cookies = response.headers.get('set-cookie');
 
                 const data = await response.json();
                 // Returning token to set in session
+
                 return {
-                    cookies,
+                    tokens: data?.data?.tokens,
                     ...data.data.user,
                 };
             },
@@ -58,6 +57,7 @@ const getOptions = (req: any, res: any) => ({
                 _id?: string;
                 address?: string | null | undefined;
                 phone?: string | null | undefined;
+                tokens?: string;
             };
         }) {
             try {
@@ -87,7 +87,6 @@ const getOptions = (req: any, res: any) => ({
                         toReview: data?.data?.toReview,
                     };
                 } else {
-                    res.setHeader('Set-Cookie', user?.cookies);
                     user.name = {
                         name: user?.name,
                         email: user?.email,
@@ -95,6 +94,7 @@ const getOptions = (req: any, res: any) => ({
                         _id: user?._id,
                         address: user?.address,
                         phone: user?.phone,
+                        tokens: user?.tokens,
                     };
                 }
                 return true;
@@ -106,6 +106,9 @@ const getOptions = (req: any, res: any) => ({
             try {
                 session.user = {
                     ...session.user.name,
+                };
+                session.tokens = {
+                    ...session.user.tokens,
                 };
                 return session;
             } catch (e) {
